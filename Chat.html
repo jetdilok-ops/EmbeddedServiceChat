@@ -1,24 +1,62 @@
+<!DOCTYPE html>
 <html>
-	<body>
-	<h1>test</h1>
-<script type='text/javascript'>
-	function initEmbeddedMessaging() {
-		try {
-			embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
+<head>
+  <meta charset="UTF-8">
+  <title>Test Messaging</title>
+</head>
+<body>
+  <h1>Test</h1>
 
-			embeddedservice_bootstrap.init(
-				'00DWK000004gqG1',
-				'Influencer_Directory',
-				'https://energy-momentum-9158--wisesight.sandbox.my.site.com/ESWInfluencerDirectory1773816667783',
-				{
-					scrt2URL: 'https://energy-momentum-9158--wisesight.sandbox.my.salesforce-scrt.com'
-				}
-			);
-		} catch (err) {
-			console.error('Error loading Embedded Messaging: ', err);
-		}
-	};
-</script>
-<script type='text/javascript' src='https://energy-momentum-9158--wisesight.sandbox.my.site.com/ESWInfluencerDirectory1773816667783/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
-  </body>
+  <script>
+    function loadMessaging() {
+      const path = window.location.pathname;
+
+      let config = {};
+
+      // 👉 Decide which deployment to use
+      if (path.startsWith('/a')) {
+        // ===== Influencer_Directory =====
+        config = {
+          name: 'Influencer_Directory',
+          baseUrl: 'https://energy-momentum-9158--wisesight.sandbox.my.site.com/ESWInfluencerDirectory1773816667783',
+          scriptUrl: 'https://energy-momentum-9158--wisesight.sandbox.my.site.com/ESWInfluencerDirectory1773816667783/assets/js/bootstrap.min.js'
+        };
+      } else {
+        // ===== Warroom =====
+        config = {
+          name: 'Warroom',
+          baseUrl: 'https://energy-momentum-9158--wisesight.sandbox.my.site.com/ESWWarroom1773820485066',
+          scriptUrl: 'https://energy-momentum-9158--wisesight.sandbox.my.site.com/ESWWarroom1773820485066/assets/js/bootstrap.min.js'
+        };
+      }
+
+      // 👉 Load script dynamically
+      const script = document.createElement('script');
+      script.src = config.scriptUrl;
+
+      script.onload = function () {
+        try {
+          embeddedservice_bootstrap.settings.language = 'en_US';
+
+          embeddedservice_bootstrap.init(
+            '00DWK000004gqG1',
+            config.name,
+            config.baseUrl,
+            {
+              scrt2URL: 'https://energy-momentum-9158--wisesight.sandbox.my.salesforce-scrt.com'
+            }
+          );
+        } catch (err) {
+          console.error('Error loading Embedded Messaging: ', err);
+        }
+      };
+
+      document.body.appendChild(script);
+    }
+
+    // Run after page load
+    window.addEventListener('load', loadMessaging);
+  </script>
+
+</body>
 </html>
